@@ -77,8 +77,13 @@ by the operator-run verification documented in `docs/FINISH-THE-RUN.md` (the bud
 itself shipped in the api stack); gates 0–6 were written by the agent's scripts in
 `scripts/`.
 
-**Demo video:** 60-second screen capture (gate-2 denials → live CloudFront URL →
-JSON healthz → honest 401 → the gate manifest) — link added on submission.
+**🎬 Demo video (60s):** gate-2's live AccessDenied proofs → the CloudFront site →
+JSON healthz through the edge → the honest 401 → the gate manifest. *(link in the
+DoraHacks submission)*
+
+**🌐 Hosted jury walkthrough:** [orange-wind-d2b3.acalincarol.workers.dev](https://orange-wind-d2b3.acalincarol.workers.dev/) —
+the narrated tour with all live-run evidence embedded (same file as
+`docs/jury-walkthrough.html`).
 
 ## Run it yourself
 
