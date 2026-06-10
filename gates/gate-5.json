@@ -1,0 +1,48 @@
+{
+  "gate": 5,
+  "distributionUrl": "https://d12p64mor0h8l0.cloudfront.net",
+  "siteBucket": "launchtest-staging-site-109734929935",
+  "waf": {
+    "name": "launchtest-staging-waf",
+    "id": "8c9256bb-b018-482a-8257-d3496a6f90c0"
+  },
+  "checks": [
+    {
+      "name": "GET dist /",
+      "expected": "200 text/html",
+      "actual": "200 text/html",
+      "pass": true
+    },
+    {
+      "name": "GET dist /some/spa/route",
+      "expected": "200",
+      "actual": "200",
+      "pass": true
+    },
+    {
+      "name": "direct S3 URL",
+      "expected": "403",
+      "actual": "403",
+      "pass": true
+    },
+    {
+      "name": "dist /v1/healthz",
+      "expected": "200 JSON",
+      "actual": "200 {\"status\":\"ok\",\"ts\":1781088263024}",
+      "pass": true
+    },
+    {
+      "name": "dist /v1/items no token",
+      "expected": "401 JSON, not 200 HTML",
+      "actual": "401 {\"message\":\"Unauthorized\"}",
+      "pass": true
+    },
+    {
+      "name": "wafv2 get-web-acl rule count",
+      "expected": "4",
+      "actual": "4",
+      "pass": true
+    }
+  ],
+  "pass": true
+}

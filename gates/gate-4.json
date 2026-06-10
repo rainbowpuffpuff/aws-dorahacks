@@ -1,0 +1,19 @@
+{
+  "gate": 4,
+  "itemId": "01KTRHQ2JS1S5W7YX3HPHN75B4",
+  "checks": [
+    {
+      "name": "ItemCreated event writes audit item",
+      "expected": "consumer log contains audit written for 01KTRHQ2JS1S5W7YX3HPHN75B4",
+      "actual": "2026-06-10T10:37:19.095Z\t9ae53030-69c1-53ba-90e7-5293294403a6\tINFO\t{\"msg\":\"audit written\",\"tenantId\":\"t-a1b2c3d4\",\"itemId\":\"01KTRHQ2JS1S5W7YX3HPHN75B4\",\"auditId\":\"01KTRHQ8ST6HSXDNWND27XAZJ7\"}\n",
+      "pass": true
+    },
+    {
+      "name": "malformed event reaches DLQ",
+      "expected": "ApproximateNumberOfMessages >= 1",
+      "actual": "1; polls: 2026-06-10T10:37:32.224Z=1",
+      "pass": true
+    }
+  ],
+  "pass": true
+}

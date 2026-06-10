@@ -1,0 +1,42 @@
+{
+  "gate": 1,
+  "userPoolId": "us-east-1_UXYlj0bTK",
+  "clientId": "5rmnipdmg5l8bpi4ufshe8pe78",
+  "claims": {
+    "tenant_id": "t-a1b2c3d4",
+    "sub": "84b84488-20c1-705a-a5a6-dce167e2cbd6",
+    "iss": "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_UXYlj0bTK",
+    "client_id": "5rmnipdmg5l8bpi4ufshe8pe78",
+    "origin_jti": "fa43790f-57f3-403b-959e-7bb4fe713162",
+    "event_id": "641ae9ba-8f82-4efd-855e-198f0ab24571",
+    "token_use": "access",
+    "scope": "aws.cognito.signin.user.admin",
+    "auth_time": 1781086919,
+    "exp": 1781090519,
+    "iat": 1781086919,
+    "email": "acalincarol@gmail.com",
+    "jti": "c46aed0a-65e2-45c1-818e-4c47fa40a35b",
+    "username": "84b84488-20c1-705a-a5a6-dce167e2cbd6"
+  },
+  "checks": [
+    {
+      "name": "tenant_id present",
+      "expected": "non-empty",
+      "actual": "t-a1b2c3d4",
+      "pass": true
+    },
+    {
+      "name": "email present",
+      "expected": "acalincarol@gmail.com",
+      "actual": "acalincarol@gmail.com",
+      "pass": true
+    },
+    {
+      "name": "token_use",
+      "expected": "access",
+      "actual": "access",
+      "pass": true
+    }
+  ],
+  "pass": true
+}

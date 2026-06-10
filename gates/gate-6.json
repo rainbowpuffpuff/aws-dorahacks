@@ -1,0 +1,32 @@
+{
+  "gate": 6,
+  "topicArn": "arn:aws:sns:us-east-1:109734929935:launchtest-staging-ops-alerts",
+  "alarmName": "launchtest-staging-api-5xx-rate",
+  "checks": [
+    {
+      "name": "seven staging alarms exist",
+      "expected": "7",
+      "actual": "7",
+      "pass": true
+    },
+    {
+      "name": "overview dashboard exists",
+      "expected": "launchtest-staging-overview",
+      "actual": "launchtest-staging-overview",
+      "pass": true
+    },
+    {
+      "name": "SNS email subscription confirmed",
+      "expected": "acalincarol@gmail.com SubscriptionArn is not PendingConfirmation",
+      "actual": "acalincarol@gmail.com arn:aws:sns:us-east-1:109734929935:launchtest-staging-ops-alerts:4101197d-13db-4717-829b-a7e2fa56d376",
+      "pass": true
+    },
+    {
+      "name": "api-5xx-rate alarm state transition recorded",
+      "expected": "history contains transition to ALARM",
+      "actual": "Alarm updated from OK to ALARM | Alarm updated from ALARM to OK | Alarm updated from OK to ALARM | Alarm updated from INSUFFICIENT_DATA to OK",
+      "pass": true
+    }
+  ],
+  "pass": true
+}

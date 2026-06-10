@@ -1,0 +1,28 @@
+{
+  "gate": 0,
+  "checks": [
+    {
+      "name": "cdk synth exits 0",
+      "expected": "0",
+      "actual": "0",
+      "pass": true
+    },
+    {
+      "name": "stack count via cdk ls",
+      "expected": "3",
+      "actual": "3",
+      "pass": true
+    },
+    {
+      "name": "npm test exits 0",
+      "expected": "0",
+      "actual": "0",
+      "pass": true
+    }
+  ],
+  "stacks": ["launchtest-staging-core","launchtest-staging-api","launchtest-staging-edge"],
+  "diagnostics": {
+    "cdkLsStatus": 0
+  },
+  "pass": true
+}

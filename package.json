@@ -1,0 +1,33 @@
+{
+  "name": "launchtest",
+  "version": "1.0.0",
+  "description": "Multi-tenant serverless SaaS foundation on AWS.",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc --noEmit",
+    "test": "vitest run",
+    "synth": "cdk synth"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@aws-sdk/client-cloudformation": "^3.1065.0",
+    "@aws-sdk/client-cognito-identity-provider": "^3.1065.0",
+    "@aws-sdk/client-dynamodb": "^3.1065.0",
+    "@aws-sdk/client-eventbridge": "^3.1065.0",
+    "@aws-sdk/client-sqs": "^3.1065.0",
+    "@aws-sdk/client-sts": "^3.1065.0",
+    "@aws-sdk/lib-dynamodb": "^3.1065.0",
+    "@types/aws-lambda": "^8.10.162",
+    "@types/node": "^25.9.2",
+    "aws-cdk": "^2.1126.0",
+    "aws-cdk-lib": "^2.258.1",
+    "constructs": "^10.6.0",
+    "esbuild": "^0.28.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.3",
+    "ulid": "^3.0.2",
+    "vitest": "^4.1.8"
+  }
+}

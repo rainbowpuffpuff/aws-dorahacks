@@ -1,0 +1,62 @@
+{
+  "gate": 3,
+  "api": "https://8l2td00s1c.execute-api.us-east-1.amazonaws.com",
+  "itemId": "01KTRHCD9K123AHXGP5N5TSH9J",
+  "checks": [
+    {
+      "name": "no-token POST /v1/items",
+      "expected": "401",
+      "actual": "401",
+      "pass": true
+    },
+    {
+      "name": "with token POST /v1/items",
+      "expected": "201 with id",
+      "actual": "201 01KTRHCD9K123AHXGP5N5TSH9J",
+      "pass": true
+    },
+    {
+      "name": "GET /v1/items contains created item",
+      "expected": "200 containing id",
+      "actual": "200 contains=true",
+      "pass": true
+    },
+    {
+      "name": "GET /v1/me has all fields",
+      "expected": "sub,email,tenant_id,groups",
+      "actual": "200 sub,email,tenant_id,groups",
+      "pass": true
+    },
+    {
+      "name": "PUT stale version",
+      "expected": "409",
+      "actual": "409",
+      "pass": true
+    },
+    {
+      "name": "PUT omitting name preserves name",
+      "expected": "gate3-1781087483108",
+      "actual": "gate3-1781087483108",
+      "pass": true
+    },
+    {
+      "name": "healthz tokenless",
+      "expected": "200",
+      "actual": "200",
+      "pass": true
+    },
+    {
+      "name": "25-request loop all 2xx",
+      "expected": "25",
+      "actual": "25",
+      "pass": true
+    },
+    {
+      "name": "items log structured R10 line",
+      "expected": "at least one matching event",
+      "actual": "2026-06-10T10:30:53.454Z\t22959c33-6257-48f6-9241-c92628707136\tINFO\t{\"requestId\":\"evZyhiwAoAMEYDA=\",\"route\":\"POST /v1/items\",\"tenantId\":\"t-a1b2c3d4\",\"status\":201,\"latencyMs\":407}\n",
+      "pass": true
+    }
+  ],
+  "pass": true
+}

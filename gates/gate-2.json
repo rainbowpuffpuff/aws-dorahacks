@@ -1,0 +1,39 @@
+{
+  "gate": 2,
+  "tableName": "launchtest-staging-data",
+  "gateRunnerRoleArn": "arn:aws:iam::109734929935:role/launchtest-staging-gate-runner",
+  "tenantRoleArn": "arn:aws:iam::109734929935:role/launchtest-staging-tenant-data-access",
+  "checks": [
+    {
+      "name": "tenant t-aaaa write+read own item",
+      "expected": "ITEM#gate-2",
+      "actual": "ITEM#gate-2",
+      "pass": true
+    },
+    {
+      "name": "tenant t-aaaa Query tenant t-bbbb table key denied",
+      "expected": "AccessDeniedException",
+      "actual": "AccessDeniedException: User: arn:aws:sts::109734929935:assumed-role/launchtest-staging-tenant-data-access/gate-2-tenant-a is not authorized to perform: dynamodb:Query on resource: arn:aws:dynamodb:us-east-1:109734929935:table/launchtest-staging-data because no identity-based policy allows the dynamodb:Query action",
+      "pass": true
+    },
+    {
+      "name": "tenant t-aaaa Query tenant t-bbbb GSI key denied",
+      "expected": "AccessDeniedException",
+      "actual": "AccessDeniedException: User: arn:aws:sts::109734929935:assumed-role/launchtest-staging-tenant-data-access/gate-2-tenant-a is not authorized to perform: dynamodb:Query on resource: arn:aws:dynamodb:us-east-1:109734929935:table/launchtest-staging-data/index/GSI1 because no identity-based policy allows the dynamodb:Query action",
+      "pass": true
+    },
+    {
+      "name": "tenant t-aaaa Scan denied",
+      "expected": "AccessDeniedException",
+      "actual": "AccessDeniedException: User: arn:aws:sts::109734929935:assumed-role/launchtest-staging-tenant-data-access/gate-2-tenant-a is not authorized to perform: dynamodb:Scan on resource: arn:aws:dynamodb:us-east-1:109734929935:table/launchtest-staging-data because no identity-based policy allows the dynamodb:Scan action",
+      "pass": true
+    },
+    {
+      "name": "untagged tenant role read denied",
+      "expected": "AccessDeniedException",
+      "actual": "AccessDeniedException: User: arn:aws:sts::109734929935:assumed-role/launchtest-staging-tenant-data-access/gate-2-untagged is not authorized to perform: dynamodb:GetItem on resource: arn:aws:dynamodb:us-east-1:109734929935:table/launchtest-staging-data because no identity-based policy allows the dynamodb:GetItem action",
+      "pass": true
+    }
+  ],
+  "pass": true
+}

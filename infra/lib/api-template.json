@@ -1,0 +1,2491 @@
+{
+  "Resources": {
+    "ApiLambdaRole66D0B4CD": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+              ]
+            ]
+          }
+        ],
+        "RoleName": "launchtest-staging-api-lambda",
+        "Tags": [
+          {
+            "Key": "env",
+            "Value": "staging"
+          },
+          {
+            "Key": "managed-by",
+            "Value": "cdk"
+          },
+          {
+            "Key": "owner",
+            "Value": "acalincarol@gmail.com"
+          },
+          {
+            "Key": "project",
+            "Value": "launchtest"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "launchtest-staging-api/ApiLambdaRole/Resource"
+      }
+    },
+    "ApiLambdaRoleDefaultPolicy84E47AF4": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "xray:PutTelemetryRecords",
+                "xray:PutTraceSegments"
+              ],
+              "Effect": "Allow",
+              "Resource": "*"
+            },
+            {
+              "Action": [
+                "sts:AssumeRole",
+                "sts:TagSession"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::ImportValue": "launchtest-staging-core:ExportsOutputFnGetAttTenantDataAccessRoleE89F5ABCArn3376BAC7"
+              }
+            },
+            {
+              "Action": "events:PutEvents",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "BusEA82B648",
+                  "Arn"
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "ApiLambdaRoleDefaultPolicy84E47AF4",
+        "Roles": [
+          {
+            "Ref": "ApiLambdaRole66D0B4CD"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "launchtest-staging-api/ApiLambdaRole/DefaultPolicy/Resource"
+      }
+    },
+    "healthzLG3BA9F6FB": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/launchtest-staging-healthz",
+        "RetentionInDays": 30,
+        "Tags": [
+          {
+            "Key": "env",
+            "Value": "staging"
+          },
+          {
+            "Key": "managed-by",
+            "Value": "cdk"
+          },
+          {
+            "Key": "owner",
+            "Value": "acalincarol@gmail.com"
+          },
+          {
+            "Key": "project",
+            "Value": "launchtest"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "aws:cdk:path": "launchtest-staging-api/healthzLG/Resource"
+      }
+    },
+    "healthz7CB9789A": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Architectures": [
+          "arm64"
+        ],
+        "Code": {
+          "S3Bucket": "cdk-hnb659fds-assets-109734929935-us-east-1",
+          "S3Key": "2dfd64d3b4ba2d6a57666bc3ded202224e1315e6c85b618e2398be0640d7a0f0.zip"
+        },
+        "Environment": {
+          "Variables": {
+            "POWERTOOLS_SERVICE_NAME": "launchtest-api",
+            "POWERTOOLS_METRICS_NAMESPACE": "launchtest",
+            "TABLE_NAME": {
+              "Fn::ImportValue": "launchtest-staging-core:ExportsOutputRefDataTable447BC44E7F3657BE"
+            },
+            "TENANT_ROLE_ARN": {
+              "Fn::ImportValue": "launchtest-staging-core:ExportsOutputFnGetAttTenantDataAccessRoleE89F5ABCArn3376BAC7"
+            },
+            "APP_NAME": "launchtest",
+            "ENV_NAME": "staging",
+            "EVENT_BUS_NAME": {
+              "Ref": "BusEA82B648"
+            }
+          }
+        },
+        "FunctionName": "launchtest-staging-healthz",
+        "Handler": "index.handler",
+        "LoggingConfig": {
+          "LogGroup": {
+            "Ref": "healthzLG3BA9F6FB"
+          }
+        },
+        "MemorySize": 512,
+        "Role": {
+          "Fn::GetAtt": [
+            "ApiLambdaRole66D0B4CD",
+            "Arn"
+          ]
+        },
+        "Runtime": "nodejs22.x",
+        "Tags": [
+          {
+            "Key": "env",
+            "Value": "staging"
+          },
+          {
+            "Key": "managed-by",
+            "Value": "cdk"
+          },
+          {
+            "Key": "owner",
+            "Value": "acalincarol@gmail.com"
+          },
+          {
+            "Key": "project",
+            "Value": "launchtest"
+          }
+        ],
+        "Timeout": 10,
+        "TracingConfig": {
+          "Mode": "Active"
+        }
+      },
+      "DependsOn": [
+        "ApiLambdaRoleDefaultPolicy84E47AF4",
+        "ApiLambdaRole66D0B4CD"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "launchtest-staging-api/healthz/Resource",
+        "aws:asset:path": "asset.2dfd64d3b4ba2d6a57666bc3ded202224e1315e6c85b618e2398be0640d7a0f0",
+        "aws:asset:is-bundled": true,
+        "aws:asset:property": "Code"
+      }
+    },
+    "meLG6DB52C19": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/launchtest-staging-me",
+        "RetentionInDays": 30,
+        "Tags": [
+          {
+            "Key": "env",
+            "Value": "staging"
+          },
+          {
+            "Key": "managed-by",
+            "Value": "cdk"
+          },
+          {
+            "Key": "owner",
+            "Value": "acalincarol@gmail.com"
+          },
+          {
+            "Key": "project",
+            "Value": "launchtest"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "aws:cdk:path": "launchtest-staging-api/meLG/Resource"
+      }
+    },
+    "me8035D6FF": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Architectures": [
+          "arm64"
+        ],
+        "Code": {
+          "S3Bucket": "cdk-hnb659fds-assets-109734929935-us-east-1",
+          "S3Key": "dc4abfbe18d3187f796882df86507f44e8ba8062d96ee7cfb665410810f0a76b.zip"
+        },
+        "Environment": {
+          "Variables": {
+            "POWERTOOLS_SERVICE_NAME": "launchtest-api",
+            "POWERTOOLS_METRICS_NAMESPACE": "launchtest",
+            "TABLE_NAME": {
+              "Fn::ImportValue": "launchtest-staging-core:ExportsOutputRefDataTable447BC44E7F3657BE"
+            },
+            "TENANT_ROLE_ARN": {
+              "Fn::ImportValue": "launchtest-staging-core:ExportsOutputFnGetAttTenantDataAccessRoleE89F5ABCArn3376BAC7"
+            },
+            "APP_NAME": "launchtest",
+            "ENV_NAME": "staging",
+            "EVENT_BUS_NAME": {
+              "Ref": "BusEA82B648"
+            }
+          }
+        },
+        "FunctionName": "launchtest-staging-me",
+        "Handler": "index.handler",
+        "LoggingConfig": {
+          "LogGroup": {
+            "Ref": "meLG6DB52C19"
+          }
+        },
+        "MemorySize": 512,
+        "Role": {
+          "Fn::GetAtt": [
+            "ApiLambdaRole66D0B4CD",
+            "Arn"
+          ]
+        },
+        "Runtime": "nodejs22.x",
+        "Tags": [
+          {
+            "Key": "env",
+            "Value": "staging"
+          },
+          {
+            "Key": "managed-by",
+            "Value": "cdk"
+          },
+          {
+            "Key": "owner",
+            "Value": "acalincarol@gmail.com"
+          },
+          {
+            "Key": "project",
+            "Value": "launchtest"
+          }
+        ],
+        "Timeout": 10,
+        "TracingConfig": {
+          "Mode": "Active"
+        }
+      },
+      "DependsOn": [
+        "ApiLambdaRoleDefaultPolicy84E47AF4",
+        "ApiLambdaRole66D0B4CD"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "launchtest-staging-api/me/Resource",
+        "aws:asset:path": "asset.dc4abfbe18d3187f796882df86507f44e8ba8062d96ee7cfb665410810f0a76b",
+        "aws:asset:is-bundled": true,
+        "aws:asset:property": "Code"
+      }
+    },
+    "itemsLGEC73C0D1": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/launchtest-staging-items",
+        "RetentionInDays": 30,
+        "Tags": [
+          {
+            "Key": "env",
+            "Value": "staging"
+          },
+          {
+            "Key": "managed-by",
+            "Value": "cdk"
+          },
+          {
+            "Key": "owner",
+            "Value": "acalincarol@gmail.com"
+          },
+          {
+            "Key": "project",
+            "Value": "launchtest"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "aws:cdk:path": "launchtest-staging-api/itemsLG/Resource"
+      }
+    },
+    "items07D08F4B": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Architectures": [
+          "arm64"
+        ],
+        "Code": {
+          "S3Bucket": "cdk-hnb659fds-assets-109734929935-us-east-1",
+          "S3Key": "a71332519530fa420086f1de6d976565aacf06c4a56e18f34aca14b72cd230dd.zip"
+        },
+        "Environment": {
+          "Variables": {
+            "POWERTOOLS_SERVICE_NAME": "launchtest-api",
+            "POWERTOOLS_METRICS_NAMESPACE": "launchtest",
+            "TABLE_NAME": {
+              "Fn::ImportValue": "launchtest-staging-core:ExportsOutputRefDataTable447BC44E7F3657BE"
+            },
+            "TENANT_ROLE_ARN": {
+              "Fn::ImportValue": "launchtest-staging-core:ExportsOutputFnGetAttTenantDataAccessRoleE89F5ABCArn3376BAC7"
+            },
+            "APP_NAME": "launchtest",
+            "ENV_NAME": "staging",
+            "EVENT_BUS_NAME": {
+              "Ref": "BusEA82B648"
+            }
+          }
+        },
+        "FunctionName": "launchtest-staging-items",
+        "Handler": "index.handler",
+        "LoggingConfig": {
+          "LogGroup": {
+            "Ref": "itemsLGEC73C0D1"
+          }
+        },
+        "MemorySize": 512,
+        "Role": {
+          "Fn::GetAtt": [
+            "ApiLambdaRole66D0B4CD",
+            "Arn"
+          ]
+        },
+        "Runtime": "nodejs22.x",
+        "Tags": [
+          {
+            "Key": "env",
+            "Value": "staging"
+          },
+          {
+            "Key": "managed-by",
+            "Value": "cdk"
+          },
+          {
+            "Key": "owner",
+            "Value": "acalincarol@gmail.com"
+          },
+          {
+            "Key": "project",
+            "Value": "launchtest"
+          }
+        ],
+        "Timeout": 10,
+        "TracingConfig": {
+          "Mode": "Active"
+        }
+      },
+      "DependsOn": [
+        "ApiLambdaRoleDefaultPolicy84E47AF4",
+        "ApiLambdaRole66D0B4CD"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "launchtest-staging-api/items/Resource",
+        "aws:asset:path": "asset.a71332519530fa420086f1de6d976565aacf06c4a56e18f34aca14b72cd230dd",
+        "aws:asset:is-bundled": true,
+        "aws:asset:property": "Code"
+      }
+    },
+    "EventsDlqACDA5DFF": {
+      "Type": "AWS::SQS::Queue",
+      "Properties": {
+        "MessageRetentionPeriod": 1209600,
+        "QueueName": "launchtest-staging-events-dlq",
+        "Tags": [
+          {
+            "Key": "env",
+            "Value": "staging"
+          },
+          {
+            "Key": "managed-by",
+            "Value": "cdk"
+          },
+          {
+            "Key": "owner",
+            "Value": "acalincarol@gmail.com"
+          },
+          {
+            "Key": "project",
+            "Value": "launchtest"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "aws:cdk:path": "launchtest-staging-api/EventsDlq/Resource"
+      }
+    },
+    "EventsDlqPolicy08A3B1A0": {
+      "Type": "AWS::SQS::QueuePolicy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sqs:*",
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false"
+                }
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": {
+                "Fn::GetAtt": [
+                  "EventsDlqACDA5DFF",
+                  "Arn"
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Queues": [
+          {
+            "Ref": "EventsDlqACDA5DFF"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "launchtest-staging-api/EventsDlq/Policy/Resource"
+      }
+    },
+    "EventsQueueB96EB0D2": {
+      "Type": "AWS::SQS::Queue",
+      "Properties": {
+        "QueueName": "launchtest-staging-events-queue",
+        "RedrivePolicy": {
+          "deadLetterTargetArn": {
+            "Fn::GetAtt": [
+              "EventsDlqACDA5DFF",
+              "Arn"
+            ]
+          },
+          "maxReceiveCount": 3
+        },
+        "SqsManagedSseEnabled": true,
+        "Tags": [
+          {
+            "Key": "env",
+            "Value": "staging"
+          },
+          {
+            "Key": "managed-by",
+            "Value": "cdk"
+          },
+          {
+            "Key": "owner",
+            "Value": "acalincarol@gmail.com"
+          },
+          {
+            "Key": "project",
+            "Value": "launchtest"
+          }
+        ],
+        "VisibilityTimeout": 180
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "aws:cdk:path": "launchtest-staging-api/EventsQueue/Resource"
+      }
+    },
+    "EventsQueuePolicyF3E925EC": {
+      "Type": "AWS::SQS::QueuePolicy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sqs:*",
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false"
+                }
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": {
+                "Fn::GetAtt": [
+                  "EventsQueueB96EB0D2",
+                  "Arn"
+                ]
+              }
+            },
+            {
+              "Action": [
+                "sqs:GetQueueAttributes",
+                "sqs:GetQueueUrl",
+                "sqs:SendMessage"
+              ],
+              "Condition": {
+                "ArnEquals": {
+                  "aws:SourceArn": {
+                    "Fn::GetAtt": [
+                      "ItemCreatedRule46967B55",
+                      "Arn"
+                    ]
+                  }
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "events.amazonaws.com"
+              },
+              "Resource": {
+                "Fn::GetAtt": [
+                  "EventsQueueB96EB0D2",
+                  "Arn"
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Queues": [
+          {
+            "Ref": "EventsQueueB96EB0D2"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "launchtest-staging-api/EventsQueue/Policy/Resource"
+      }
+    },
+    "BusEA82B648": {
+      "Type": "AWS::Events::EventBus",
+      "Properties": {
+        "Name": "launchtest-staging-bus",
+        "Tags": [
+          {
+            "Key": "env",
+            "Value": "staging"
+          },
+          {
+            "Key": "managed-by",
+            "Value": "cdk"
+          },
+          {
+            "Key": "owner",
+            "Value": "acalincarol@gmail.com"
+          },
+          {
+            "Key": "project",
+            "Value": "launchtest"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "launchtest-staging-api/Bus/Resource"
+      }
+    },
+    "ItemCreatedRule46967B55": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "EventBusName": {
+          "Ref": "BusEA82B648"
+        },
+        "EventPattern": {
+          "source": [
+            "launchtest.items"
+          ],
+          "detail-type": [
+            "ItemCreated"
+          ]
+        },
+        "Name": "launchtest-staging-item-created",
+        "State": "ENABLED",
+        "Tags": [
+          {
+            "Key": "env",
+            "Value": "staging"
+          },
+          {
+            "Key": "managed-by",
+            "Value": "cdk"
+          },
+          {
+            "Key": "owner",
+            "Value": "acalincarol@gmail.com"
+          },
+          {
+            "Key": "project",
+            "Value": "launchtest"
+          }
+        ],
+        "Targets": [
+          {
+            "Arn": {
+              "Fn::GetAtt": [
+                "EventsQueueB96EB0D2",
+                "Arn"
+              ]
+            },
+            "Id": "Target0"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "launchtest-staging-api/ItemCreatedRule/Resource"
+      }
+    },
+    "consumerLG03E8C56D": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/launchtest-staging-consumer",
+        "RetentionInDays": 30,
+        "Tags": [
+          {
+            "Key": "env",
+            "Value": "staging"
+          },
+          {
+            "Key": "managed-by",
+            "Value": "cdk"
+          },
+          {
+            "Key": "owner",
+            "Value": "acalincarol@gmail.com"
+          },
+          {
+            "Key": "project",
+            "Value": "launchtest"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "aws:cdk:path": "launchtest-staging-api/consumerLG/Resource"
+      }
+    },
+    "consumerServiceRoleA19DC496": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+              ]
+            ]
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "env",
+            "Value": "staging"
+          },
+          {
+            "Key": "managed-by",
+            "Value": "cdk"
+          },
+          {
+            "Key": "owner",
+            "Value": "acalincarol@gmail.com"
+          },
+          {
+            "Key": "project",
+            "Value": "launchtest"
+          }
+        ],
+        "RoleName": "launchtest-staging-consumer"
+      },
+      "Metadata": {
+        "aws:cdk:path": "launchtest-staging-api/consumer/ServiceRole/Resource"
+      }
+    },
+    "consumerServiceRoleDefaultPolicy2B75D753": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "xray:PutTelemetryRecords",
+                "xray:PutTraceSegments"
+              ],
+              "Effect": "Allow",
+              "Resource": "*"
+            },
+            {
+              "Action": [
+                "sts:AssumeRole",
+                "sts:TagSession"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::ImportValue": "launchtest-staging-core:ExportsOutputFnGetAttTenantDataAccessRoleE89F5ABCArn3376BAC7"
+              }
+            },
+            {
+              "Action": [
+                "sqs:ChangeMessageVisibility",
+                "sqs:DeleteMessage",
+                "sqs:GetQueueAttributes",
+                "sqs:GetQueueUrl",
+                "sqs:ReceiveMessage"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "EventsQueueB96EB0D2",
+                  "Arn"
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "consumerServiceRoleDefaultPolicy2B75D753",
+        "Roles": [
+          {
+            "Ref": "consumerServiceRoleA19DC496"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "launchtest-staging-api/consumer/ServiceRole/DefaultPolicy/Resource"
+      }
+    },
+    "consumer4CA80CB0": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Architectures": [
+          "arm64"
+        ],
+        "Code": {
+          "S3Bucket": "cdk-hnb659fds-assets-109734929935-us-east-1",
+          "S3Key": "2b04eee133dbb2b8543c0b3fd37b66c9fefd8b0afb2fb039ff1393aa43f584be.zip"
+        },
+        "Environment": {
+          "Variables": {
+            "POWERTOOLS_SERVICE_NAME": "launchtest-api",
+            "POWERTOOLS_METRICS_NAMESPACE": "launchtest",
+            "TABLE_NAME": {
+              "Fn::ImportValue": "launchtest-staging-core:ExportsOutputRefDataTable447BC44E7F3657BE"
+            },
+            "TENANT_ROLE_ARN": {
+              "Fn::ImportValue": "launchtest-staging-core:ExportsOutputFnGetAttTenantDataAccessRoleE89F5ABCArn3376BAC7"
+            },
+            "APP_NAME": "launchtest",
+            "ENV_NAME": "staging",
+            "EVENT_BUS_NAME": {
+              "Ref": "BusEA82B648"
+            }
+          }
+        },
+        "FunctionName": "launchtest-staging-consumer",
+        "Handler": "index.handler",
+        "LoggingConfig": {
+          "LogGroup": {
+            "Ref": "consumerLG03E8C56D"
+          }
+        },
+        "MemorySize": 512,
+        "Role": {
+          "Fn::GetAtt": [
+            "consumerServiceRoleA19DC496",
+            "Arn"
+          ]
+        },
+        "Runtime": "nodejs22.x",
+        "Tags": [
+          {
+            "Key": "env",
+            "Value": "staging"
+          },
+          {
+            "Key": "managed-by",
+            "Value": "cdk"
+          },
+          {
+            "Key": "owner",
+            "Value": "acalincarol@gmail.com"
+          },
+          {
+            "Key": "project",
+            "Value": "launchtest"
+          }
+        ],
+        "Timeout": 30,
+        "TracingConfig": {
+          "Mode": "Active"
+        }
+      },
+      "DependsOn": [
+        "consumerServiceRoleDefaultPolicy2B75D753",
+        "consumerServiceRoleA19DC496"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "launchtest-staging-api/consumer/Resource",
+        "aws:asset:path": "asset.2b04eee133dbb2b8543c0b3fd37b66c9fefd8b0afb2fb039ff1393aa43f584be",
+        "aws:asset:is-bundled": true,
+        "aws:asset:property": "Code"
+      }
+    },
+    "consumerSqsEventSourcelaunchteststagingapiEventsQueueC0A71D6A8F0D78DC": {
+      "Type": "AWS::Lambda::EventSourceMapping",
+      "Properties": {
+        "BatchSize": 10,
+        "EventSourceArn": {
+          "Fn::GetAtt": [
+            "EventsQueueB96EB0D2",
+            "Arn"
+          ]
+        },
+        "FunctionName": {
+          "Ref": "consumer4CA80CB0"
+        },
+        "FunctionResponseTypes": [
+          "ReportBatchItemFailures"
+        ],
+        "MaximumBatchingWindowInSeconds": 5,
+        "Tags": [
+          {
+            "Key": "env",
+            "Value": "staging"
+          },
+          {
+            "Key": "managed-by",
+            "Value": "cdk"
+          },
+          {
+            "Key": "owner",
+            "Value": "acalincarol@gmail.com"
+          },
+          {
+            "Key": "project",
+            "Value": "launchtest"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "launchtest-staging-api/consumer/SqsEventSource:launchteststagingapiEventsQueueC0A71D6A/Resource"
+      }
+    },
+    "ApiAccessLG15D77C7A": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/apigateway/launchtest-staging-access",
+        "RetentionInDays": 30,
+        "Tags": [
+          {
+            "Key": "env",
+            "Value": "staging"
+          },
+          {
+            "Key": "managed-by",
+            "Value": "cdk"
+          },
+          {
+            "Key": "owner",
+            "Value": "acalincarol@gmail.com"
+          },
+          {
+            "Key": "project",
+            "Value": "launchtest"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "aws:cdk:path": "launchtest-staging-api/ApiAccessLG/Resource"
+      }
+    },
+    "ApiAccessLGPolicyResourcePolicy6707933B": {
+      "Type": "AWS::Logs::ResourcePolicy",
+      "Properties": {
+        "PolicyDocument": {
+          "Fn::Join": [
+            "",
+            [
+              "{\"Statement\":[{\"Action\":[\"logs:CreateLogStream\",\"logs:PutLogEvents\"],\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"apigateway.amazonaws.com\"},\"Resource\":\"",
+              {
+                "Fn::GetAtt": [
+                  "ApiAccessLG15D77C7A",
+                  "Arn"
+                ]
+              },
+              "\"}],\"Version\":\"2012-10-17\"}"
+            ]
+          ]
+        },
+        "PolicyName": "launchteststagingapiApiAccessLGPolicyAA8CC0D0"
+      },
+      "Metadata": {
+        "aws:cdk:path": "launchtest-staging-api/ApiAccessLG/Policy/ResourcePolicy"
+      }
+    },
+    "HttpApiF5A9A8A7": {
+      "Type": "AWS::ApiGatewayV2::Api",
+      "Properties": {
+        "CorsConfiguration": {
+          "AllowHeaders": [
+            "Authorization",
+            "Content-Type"
+          ],
+          "AllowMethods": [
+            "GET",
+            "POST",
+            "PUT",
+            "DELETE",
+            "OPTIONS"
+          ],
+          "AllowOrigins": [
+            "http://localhost:5173"
+          ],
+          "MaxAge": 86400
+        },
+        "Name": "launchtest-staging-api",
+        "ProtocolType": "HTTP",
+        "Tags": {
+          "env": "staging",
+          "managed-by": "cdk",
+          "owner": "acalincarol@gmail.com",
+          "project": "launchtest"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "launchtest-staging-api/HttpApi/Resource"
+      }
+    },
+    "HttpApiGETv1healthzhealthzGETIntACD07010": {
+      "Type": "AWS::ApiGatewayV2::Integration",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApiF5A9A8A7"
+        },
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::GetAtt": [
+            "healthz7CB9789A",
+            "Arn"
+          ]
+        },
+        "PayloadFormatVersion": "2.0"
+      },
+      "Metadata": {
+        "aws:cdk:path": "launchtest-staging-api/HttpApi/GET--v1--healthz/healthzGETInt/Resource"
+      }
+    },
+    "HttpApiGETv1healthzhealthzGETIntPermission8483E920": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "healthz7CB9789A",
+            "Arn"
+          ]
+        },
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:aws:execute-api:us-east-1:109734929935:",
+              {
+                "Ref": "HttpApiF5A9A8A7"
+              },
+              "/*/*/v1/healthz"
+            ]
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "launchtest-staging-api/HttpApi/GET--v1--healthz/healthzGETInt-Permission"
+      }
+    },
+    "HttpApiGETv1healthz1B937F3B": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApiF5A9A8A7"
+        },
+        "AuthorizationType": "NONE",
+        "RouteKey": "GET /v1/healthz",
+        "Target": {
+          "Fn::Join": [
+            "",
+            [
+              "integrations/",
+              {
+                "Ref": "HttpApiGETv1healthzhealthzGETIntACD07010"
+              }
+            ]
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "launchtest-staging-api/HttpApi/GET--v1--healthz/Resource"
+      }
+    },
+    "HttpApiGETv1memeGETIntE23043A8": {
+      "Type": "AWS::ApiGatewayV2::Integration",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApiF5A9A8A7"
+        },
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::GetAtt": [
+            "me8035D6FF",
+            "Arn"
+          ]
+        },
+        "PayloadFormatVersion": "2.0"
+      },
+      "Metadata": {
+        "aws:cdk:path": "launchtest-staging-api/HttpApi/GET--v1--me/meGETInt/Resource"
+      }
+    },
+    "HttpApiGETv1memeGETIntPermissionF2DCDA20": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "me8035D6FF",
+            "Arn"
+          ]
+        },
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:aws:execute-api:us-east-1:109734929935:",
+              {
+                "Ref": "HttpApiF5A9A8A7"
+              },
+              "/*/*/v1/me"
+            ]
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "launchtest-staging-api/HttpApi/GET--v1--me/meGETInt-Permission"
+      }
+    },
+    "HttpApiGETv1me404D9BD4": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApiF5A9A8A7"
+        },
+        "AuthorizationType": "JWT",
+        "AuthorizerId": {
+          "Ref": "HttpApiJwtAuthDC0890A1"
+        },
+        "RouteKey": "GET /v1/me",
+        "Target": {
+          "Fn::Join": [
+            "",
+            [
+              "integrations/",
+              {
+                "Ref": "HttpApiGETv1memeGETIntE23043A8"
+              }
+            ]
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "launchtest-staging-api/HttpApi/GET--v1--me/Resource"
+      }
+    },
+    "HttpApiJwtAuthDC0890A1": {
+      "Type": "AWS::ApiGatewayV2::Authorizer",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApiF5A9A8A7"
+        },
+        "AuthorizerType": "JWT",
+        "IdentitySource": [
+          "$request.header.Authorization"
+        ],
+        "JwtConfiguration": {
+          "Audience": [
+            {
+              "Fn::ImportValue": "launchtest-staging-core:ExportsOutputRefUserPoolWebClient4C9370B02E2C9FF9"
+            }
+          ],
+          "Issuer": {
+            "Fn::Join": [
+              "",
+              [
+                "https://cognito-idp.us-east-1.amazonaws.com/",
+                {
+                  "Fn::ImportValue": "launchtest-staging-core:ExportsOutputRefUserPool6BA7E5F296FD7236"
+                }
+              ]
+            ]
+          }
+        },
+        "Name": "JwtAuth"
+      },
+      "Metadata": {
+        "aws:cdk:path": "launchtest-staging-api/HttpApi/JwtAuth/Resource"
+      }
+    },
+    "HttpApiPOSTv1itemsitemsPOSTIntA6DC2794": {
+      "Type": "AWS::ApiGatewayV2::Integration",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApiF5A9A8A7"
+        },
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::GetAtt": [
+            "items07D08F4B",
+            "Arn"
+          ]
+        },
+        "PayloadFormatVersion": "2.0"
+      },
+      "Metadata": {
+        "aws:cdk:path": "launchtest-staging-api/HttpApi/POST--v1--items/itemsPOSTInt/Resource"
+      }
+    },
+    "HttpApiPOSTv1itemsitemsPOSTIntPermission9267D712": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "items07D08F4B",
+            "Arn"
+          ]
+        },
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:aws:execute-api:us-east-1:109734929935:",
+              {
+                "Ref": "HttpApiF5A9A8A7"
+              },
+              "/*/*/v1/items"
+            ]
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "launchtest-staging-api/HttpApi/POST--v1--items/itemsPOSTInt-Permission"
+      }
+    },
+    "HttpApiPOSTv1itemsECC7BBDC": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApiF5A9A8A7"
+        },
+        "AuthorizationType": "JWT",
+        "AuthorizerId": {
+          "Ref": "HttpApiJwtAuthDC0890A1"
+        },
+        "RouteKey": "POST /v1/items",
+        "Target": {
+          "Fn::Join": [
+            "",
+            [
+              "integrations/",
+              {
+                "Ref": "HttpApiPOSTv1itemsitemsPOSTIntA6DC2794"
+              }
+            ]
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "launchtest-staging-api/HttpApi/POST--v1--items/Resource"
+      }
+    },
+    "HttpApiGETv1itemsitemsGETInt11A43345": {
+      "Type": "AWS::ApiGatewayV2::Integration",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApiF5A9A8A7"
+        },
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::GetAtt": [
+            "items07D08F4B",
+            "Arn"
+          ]
+        },
+        "PayloadFormatVersion": "2.0"
+      },
+      "Metadata": {
+        "aws:cdk:path": "launchtest-staging-api/HttpApi/GET--v1--items/itemsGETInt/Resource"
+      }
+    },
+    "HttpApiGETv1itemsitemsGETIntPermissionB03A3998": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "items07D08F4B",
+            "Arn"
+          ]
+        },
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:aws:execute-api:us-east-1:109734929935:",
+              {
+                "Ref": "HttpApiF5A9A8A7"
+              },
+              "/*/*/v1/items"
+            ]
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "launchtest-staging-api/HttpApi/GET--v1--items/itemsGETInt-Permission"
+      }
+    },
+    "HttpApiGETv1items4E2B4F64": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApiF5A9A8A7"
+        },
+        "AuthorizationType": "JWT",
+        "AuthorizerId": {
+          "Ref": "HttpApiJwtAuthDC0890A1"
+        },
+        "RouteKey": "GET /v1/items",
+        "Target": {
+          "Fn::Join": [
+            "",
+            [
+              "integrations/",
+              {
+                "Ref": "HttpApiGETv1itemsitemsGETInt11A43345"
+              }
+            ]
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "launchtest-staging-api/HttpApi/GET--v1--items/Resource"
+      }
+    },
+    "HttpApiGETv1itemsiditemsGETIntDA080965": {
+      "Type": "AWS::ApiGatewayV2::Integration",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApiF5A9A8A7"
+        },
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::GetAtt": [
+            "items07D08F4B",
+            "Arn"
+          ]
+        },
+        "PayloadFormatVersion": "2.0"
+      },
+      "Metadata": {
+        "aws:cdk:path": "launchtest-staging-api/HttpApi/GET--v1--items--{id}/itemsGETInt/Resource"
+      }
+    },
+    "HttpApiGETv1itemsiditemsGETIntPermission5E033834": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "items07D08F4B",
+            "Arn"
+          ]
+        },
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:aws:execute-api:us-east-1:109734929935:",
+              {
+                "Ref": "HttpApiF5A9A8A7"
+              },
+              "/*/*/v1/items/{id}"
+            ]
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "launchtest-staging-api/HttpApi/GET--v1--items--{id}/itemsGETInt-Permission"
+      }
+    },
+    "HttpApiGETv1itemsidA88CDF72": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApiF5A9A8A7"
+        },
+        "AuthorizationType": "JWT",
+        "AuthorizerId": {
+          "Ref": "HttpApiJwtAuthDC0890A1"
+        },
+        "RouteKey": "GET /v1/items/{id}",
+        "Target": {
+          "Fn::Join": [
+            "",
+            [
+              "integrations/",
+              {
+                "Ref": "HttpApiGETv1itemsiditemsGETIntDA080965"
+              }
+            ]
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "launchtest-staging-api/HttpApi/GET--v1--items--{id}/Resource"
+      }
+    },
+    "HttpApiPUTv1itemsiditemsPUTInt4A899BDE": {
+      "Type": "AWS::ApiGatewayV2::Integration",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApiF5A9A8A7"
+        },
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::GetAtt": [
+            "items07D08F4B",
+            "Arn"
+          ]
+        },
+        "PayloadFormatVersion": "2.0"
+      },
+      "Metadata": {
+        "aws:cdk:path": "launchtest-staging-api/HttpApi/PUT--v1--items--{id}/itemsPUTInt/Resource"
+      }
+    },
+    "HttpApiPUTv1itemsiditemsPUTIntPermission7FE7425B": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "items07D08F4B",
+            "Arn"
+          ]
+        },
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:aws:execute-api:us-east-1:109734929935:",
+              {
+                "Ref": "HttpApiF5A9A8A7"
+              },
+              "/*/*/v1/items/{id}"
+            ]
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "launchtest-staging-api/HttpApi/PUT--v1--items--{id}/itemsPUTInt-Permission"
+      }
+    },
+    "HttpApiPUTv1itemsidDF287076": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApiF5A9A8A7"
+        },
+        "AuthorizationType": "JWT",
+        "AuthorizerId": {
+          "Ref": "HttpApiJwtAuthDC0890A1"
+        },
+        "RouteKey": "PUT /v1/items/{id}",
+        "Target": {
+          "Fn::Join": [
+            "",
+            [
+              "integrations/",
+              {
+                "Ref": "HttpApiPUTv1itemsiditemsPUTInt4A899BDE"
+              }
+            ]
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "launchtest-staging-api/HttpApi/PUT--v1--items--{id}/Resource"
+      }
+    },
+    "HttpApiDELETEv1itemsiditemsDELETEIntAE5F53C1": {
+      "Type": "AWS::ApiGatewayV2::Integration",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApiF5A9A8A7"
+        },
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::GetAtt": [
+            "items07D08F4B",
+            "Arn"
+          ]
+        },
+        "PayloadFormatVersion": "2.0"
+      },
+      "Metadata": {
+        "aws:cdk:path": "launchtest-staging-api/HttpApi/DELETE--v1--items--{id}/itemsDELETEInt/Resource"
+      }
+    },
+    "HttpApiDELETEv1itemsiditemsDELETEIntPermission5542BC8E": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "items07D08F4B",
+            "Arn"
+          ]
+        },
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:aws:execute-api:us-east-1:109734929935:",
+              {
+                "Ref": "HttpApiF5A9A8A7"
+              },
+              "/*/*/v1/items/{id}"
+            ]
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "launchtest-staging-api/HttpApi/DELETE--v1--items--{id}/itemsDELETEInt-Permission"
+      }
+    },
+    "HttpApiDELETEv1itemsidF321FF8F": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApiF5A9A8A7"
+        },
+        "AuthorizationType": "JWT",
+        "AuthorizerId": {
+          "Ref": "HttpApiJwtAuthDC0890A1"
+        },
+        "RouteKey": "DELETE /v1/items/{id}",
+        "Target": {
+          "Fn::Join": [
+            "",
+            [
+              "integrations/",
+              {
+                "Ref": "HttpApiDELETEv1itemsiditemsDELETEIntAE5F53C1"
+              }
+            ]
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "launchtest-staging-api/HttpApi/DELETE--v1--items--{id}/Resource"
+      }
+    },
+    "HttpApiPOSTv1tenantsitemsPOSTInt5A9B3485": {
+      "Type": "AWS::ApiGatewayV2::Integration",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApiF5A9A8A7"
+        },
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::GetAtt": [
+            "items07D08F4B",
+            "Arn"
+          ]
+        },
+        "PayloadFormatVersion": "2.0"
+      },
+      "Metadata": {
+        "aws:cdk:path": "launchtest-staging-api/HttpApi/POST--v1--tenants/itemsPOSTInt/Resource"
+      }
+    },
+    "HttpApiPOSTv1tenantsitemsPOSTIntPermissionCCEC4AB3": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "items07D08F4B",
+            "Arn"
+          ]
+        },
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:aws:execute-api:us-east-1:109734929935:",
+              {
+                "Ref": "HttpApiF5A9A8A7"
+              },
+              "/*/*/v1/tenants"
+            ]
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "launchtest-staging-api/HttpApi/POST--v1--tenants/itemsPOSTInt-Permission"
+      }
+    },
+    "HttpApiPOSTv1tenantsB4D000FC": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApiF5A9A8A7"
+        },
+        "AuthorizationType": "JWT",
+        "AuthorizerId": {
+          "Ref": "HttpApiJwtAuthDC0890A1"
+        },
+        "RouteKey": "POST /v1/tenants",
+        "Target": {
+          "Fn::Join": [
+            "",
+            [
+              "integrations/",
+              {
+                "Ref": "HttpApiPOSTv1tenantsitemsPOSTInt5A9B3485"
+              }
+            ]
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "launchtest-staging-api/HttpApi/POST--v1--tenants/Resource"
+      }
+    },
+    "DefaultStageEE28A986": {
+      "Type": "AWS::ApiGatewayV2::Stage",
+      "Properties": {
+        "AccessLogSettings": {
+          "DestinationArn": {
+            "Fn::GetAtt": [
+              "ApiAccessLG15D77C7A",
+              "Arn"
+            ]
+          },
+          "Format": "{\"requestId\":\"$context.requestId\",\"ip\":\"$context.identity.sourceIp\",\"routeKey\":\"$context.routeKey\",\"status\":\"$context.status\",\"latency\":\"$context.responseLatency\",\"tenantId\":\"$context.authorizer.claims.tenant_id\"}"
+        },
+        "ApiId": {
+          "Ref": "HttpApiF5A9A8A7"
+        },
+        "AutoDeploy": true,
+        "DefaultRouteSettings": {
+          "ThrottlingBurstLimit": 100,
+          "ThrottlingRateLimit": 50
+        },
+        "StageName": "$default",
+        "Tags": {
+          "env": "staging",
+          "managed-by": "cdk",
+          "owner": "acalincarol@gmail.com",
+          "project": "launchtest"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "launchtest-staging-api/DefaultStage/Resource"
+      }
+    },
+    "AlertTopic2720D535": {
+      "Type": "AWS::SNS::Topic",
+      "Properties": {
+        "Tags": [
+          {
+            "Key": "env",
+            "Value": "staging"
+          },
+          {
+            "Key": "managed-by",
+            "Value": "cdk"
+          },
+          {
+            "Key": "owner",
+            "Value": "acalincarol@gmail.com"
+          },
+          {
+            "Key": "project",
+            "Value": "launchtest"
+          }
+        ],
+        "TopicName": "launchtest-staging-ops-alerts"
+      },
+      "Metadata": {
+        "aws:cdk:path": "launchtest-staging-api/AlertTopic/Resource"
+      }
+    },
+    "AlertTopicstufflatersgmailcomEBB298FA": {
+      "Type": "AWS::SNS::Subscription",
+      "Properties": {
+        "Endpoint": "acalincarol@gmail.com",
+        "Protocol": "email",
+        "TopicArn": {
+          "Ref": "AlertTopic2720D535"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "launchtest-staging-api/AlertTopic/stufflaters@gmail.com/Resource"
+      }
+    },
+    "Api5xxAlarm31F257DC": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "AlarmActions": [
+          {
+            "Ref": "AlertTopic2720D535"
+          }
+        ],
+        "AlarmName": "launchtest-staging-api-5xx-rate",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "EvaluationPeriods": 2,
+        "Metrics": [
+          {
+            "Expression": "100*(m5xx/m_total)",
+            "Id": "expr_1",
+            "ReturnData": true
+          },
+          {
+            "Id": "m5xx",
+            "MetricStat": {
+              "Metric": {
+                "Dimensions": [
+                  {
+                    "Name": "ApiId",
+                    "Value": {
+                      "Ref": "HttpApiF5A9A8A7"
+                    }
+                  }
+                ],
+                "MetricName": "5XXError",
+                "Namespace": "AWS/ApiGateway"
+              },
+              "Period": 300,
+              "Stat": "Sum"
+            },
+            "ReturnData": false
+          },
+          {
+            "Id": "m_total",
+            "MetricStat": {
+              "Metric": {
+                "Dimensions": [
+                  {
+                    "Name": "ApiId",
+                    "Value": {
+                      "Ref": "HttpApiF5A9A8A7"
+                    }
+                  }
+                ],
+                "MetricName": "Count",
+                "Namespace": "AWS/ApiGateway"
+              },
+              "Period": 300,
+              "Stat": "Sum"
+            },
+            "ReturnData": false
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "env",
+            "Value": "staging"
+          },
+          {
+            "Key": "managed-by",
+            "Value": "cdk"
+          },
+          {
+            "Key": "owner",
+            "Value": "acalincarol@gmail.com"
+          },
+          {
+            "Key": "project",
+            "Value": "launchtest"
+          }
+        ],
+        "Threshold": 1,
+        "TreatMissingData": "notBreaching"
+      },
+      "Metadata": {
+        "aws:cdk:path": "launchtest-staging-api/Api5xxAlarm/Resource"
+      }
+    },
+    "ApiLatencyAlarm453002C0": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "AlarmActions": [
+          {
+            "Ref": "AlertTopic2720D535"
+          }
+        ],
+        "AlarmName": "launchtest-staging-api-p99-latency",
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "Dimensions": [
+          {
+            "Name": "ApiId",
+            "Value": {
+              "Ref": "HttpApiF5A9A8A7"
+            }
+          }
+        ],
+        "EvaluationPeriods": 3,
+        "ExtendedStatistic": "p99",
+        "MetricName": "IntegrationLatency",
+        "Namespace": "AWS/ApiGateway",
+        "Period": 300,
+        "Tags": [
+          {
+            "Key": "env",
+            "Value": "staging"
+          },
+          {
+            "Key": "managed-by",
+            "Value": "cdk"
+          },
+          {
+            "Key": "owner",
+            "Value": "acalincarol@gmail.com"
+          },
+          {
+            "Key": "project",
+            "Value": "launchtest"
+          }
+        ],
+        "Threshold": 1500,
+        "TreatMissingData": "notBreaching"
+      },
+      "Metadata": {
+        "aws:cdk:path": "launchtest-staging-api/ApiLatencyAlarm/Resource"
+      }
+    },
+    "LambdaErrorsAlarm8ED74A7D": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "AlarmActions": [
+          {
+            "Ref": "AlertTopic2720D535"
+          }
+        ],
+        "AlarmName": "launchtest-staging-lambda-errors",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "EvaluationPeriods": 1,
+        "Metrics": [
+          {
+            "Expression": "m0+m1+m2+m3",
+            "Id": "expr_1",
+            "ReturnData": true
+          },
+          {
+            "Id": "m0",
+            "MetricStat": {
+              "Metric": {
+                "Dimensions": [
+                  {
+                    "Name": "FunctionName",
+                    "Value": {
+                      "Ref": "healthz7CB9789A"
+                    }
+                  }
+                ],
+                "MetricName": "Errors",
+                "Namespace": "AWS/Lambda"
+              },
+              "Period": 300,
+              "Stat": "Sum"
+            },
+            "ReturnData": false
+          },
+          {
+            "Id": "m1",
+            "MetricStat": {
+              "Metric": {
+                "Dimensions": [
+                  {
+                    "Name": "FunctionName",
+                    "Value": {
+                      "Ref": "me8035D6FF"
+                    }
+                  }
+                ],
+                "MetricName": "Errors",
+                "Namespace": "AWS/Lambda"
+              },
+              "Period": 300,
+              "Stat": "Sum"
+            },
+            "ReturnData": false
+          },
+          {
+            "Id": "m2",
+            "MetricStat": {
+              "Metric": {
+                "Dimensions": [
+                  {
+                    "Name": "FunctionName",
+                    "Value": {
+                      "Ref": "items07D08F4B"
+                    }
+                  }
+                ],
+                "MetricName": "Errors",
+                "Namespace": "AWS/Lambda"
+              },
+              "Period": 300,
+              "Stat": "Sum"
+            },
+            "ReturnData": false
+          },
+          {
+            "Id": "m3",
+            "MetricStat": {
+              "Metric": {
+                "Dimensions": [
+                  {
+                    "Name": "FunctionName",
+                    "Value": {
+                      "Ref": "consumer4CA80CB0"
+                    }
+                  }
+                ],
+                "MetricName": "Errors",
+                "Namespace": "AWS/Lambda"
+              },
+              "Period": 300,
+              "Stat": "Sum"
+            },
+            "ReturnData": false
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "env",
+            "Value": "staging"
+          },
+          {
+            "Key": "managed-by",
+            "Value": "cdk"
+          },
+          {
+            "Key": "owner",
+            "Value": "acalincarol@gmail.com"
+          },
+          {
+            "Key": "project",
+            "Value": "launchtest"
+          }
+        ],
+        "Threshold": 0,
+        "TreatMissingData": "notBreaching"
+      },
+      "Metadata": {
+        "aws:cdk:path": "launchtest-staging-api/LambdaErrorsAlarm/Resource"
+      }
+    },
+    "LambdaThrottlesAlarm13DE03A1": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "AlarmActions": [
+          {
+            "Ref": "AlertTopic2720D535"
+          }
+        ],
+        "AlarmName": "launchtest-staging-lambda-throttles",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "EvaluationPeriods": 1,
+        "Metrics": [
+          {
+            "Expression": "t0+t1+t2+t3",
+            "Id": "expr_1",
+            "ReturnData": true
+          },
+          {
+            "Id": "t0",
+            "MetricStat": {
+              "Metric": {
+                "Dimensions": [
+                  {
+                    "Name": "FunctionName",
+                    "Value": {
+                      "Ref": "healthz7CB9789A"
+                    }
+                  }
+                ],
+                "MetricName": "Throttles",
+                "Namespace": "AWS/Lambda"
+              },
+              "Period": 300,
+              "Stat": "Sum"
+            },
+            "ReturnData": false
+          },
+          {
+            "Id": "t1",
+            "MetricStat": {
+              "Metric": {
+                "Dimensions": [
+                  {
+                    "Name": "FunctionName",
+                    "Value": {
+                      "Ref": "me8035D6FF"
+                    }
+                  }
+                ],
+                "MetricName": "Throttles",
+                "Namespace": "AWS/Lambda"
+              },
+              "Period": 300,
+              "Stat": "Sum"
+            },
+            "ReturnData": false
+          },
+          {
+            "Id": "t2",
+            "MetricStat": {
+              "Metric": {
+                "Dimensions": [
+                  {
+                    "Name": "FunctionName",
+                    "Value": {
+                      "Ref": "items07D08F4B"
+                    }
+                  }
+                ],
+                "MetricName": "Throttles",
+                "Namespace": "AWS/Lambda"
+              },
+              "Period": 300,
+              "Stat": "Sum"
+            },
+            "ReturnData": false
+          },
+          {
+            "Id": "t3",
+            "MetricStat": {
+              "Metric": {
+                "Dimensions": [
+                  {
+                    "Name": "FunctionName",
+                    "Value": {
+                      "Ref": "consumer4CA80CB0"
+                    }
+                  }
+                ],
+                "MetricName": "Throttles",
+                "Namespace": "AWS/Lambda"
+              },
+              "Period": 300,
+              "Stat": "Sum"
+            },
+            "ReturnData": false
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "env",
+            "Value": "staging"
+          },
+          {
+            "Key": "managed-by",
+            "Value": "cdk"
+          },
+          {
+            "Key": "owner",
+            "Value": "acalincarol@gmail.com"
+          },
+          {
+            "Key": "project",
+            "Value": "launchtest"
+          }
+        ],
+        "Threshold": 0,
+        "TreatMissingData": "notBreaching"
+      },
+      "Metadata": {
+        "aws:cdk:path": "launchtest-staging-api/LambdaThrottlesAlarm/Resource"
+      }
+    },
+    "DlqAlarmAA93C9B0": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "AlarmActions": [
+          {
+            "Ref": "AlertTopic2720D535"
+          }
+        ],
+        "AlarmName": "launchtest-staging-dlq-not-empty",
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "Dimensions": [
+          {
+            "Name": "QueueName",
+            "Value": {
+              "Fn::GetAtt": [
+                "EventsDlqACDA5DFF",
+                "QueueName"
+              ]
+            }
+          }
+        ],
+        "EvaluationPeriods": 1,
+        "MetricName": "ApproximateNumberOfMessagesVisible",
+        "Namespace": "AWS/SQS",
+        "Period": 60,
+        "Statistic": "Maximum",
+        "Tags": [
+          {
+            "Key": "env",
+            "Value": "staging"
+          },
+          {
+            "Key": "managed-by",
+            "Value": "cdk"
+          },
+          {
+            "Key": "owner",
+            "Value": "acalincarol@gmail.com"
+          },
+          {
+            "Key": "project",
+            "Value": "launchtest"
+          }
+        ],
+        "Threshold": 1,
+        "TreatMissingData": "notBreaching"
+      },
+      "Metadata": {
+        "aws:cdk:path": "launchtest-staging-api/DlqAlarm/Resource"
+      }
+    },
+    "DdbErrorsAlarm8D539BBF": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "AlarmActions": [
+          {
+            "Ref": "AlertTopic2720D535"
+          }
+        ],
+        "AlarmName": "launchtest-staging-ddb-errors",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "EvaluationPeriods": 1,
+        "Metrics": [
+          {
+            "Expression": "sys + thr",
+            "Id": "expr_1",
+            "ReturnData": true
+          },
+          {
+            "Id": "sys",
+            "MetricStat": {
+              "Metric": {
+                "Dimensions": [
+                  {
+                    "Name": "TableName",
+                    "Value": {
+                      "Fn::ImportValue": "launchtest-staging-core:ExportsOutputRefDataTable447BC44E7F3657BE"
+                    }
+                  }
+                ],
+                "MetricName": "SystemErrors",
+                "Namespace": "AWS/DynamoDB"
+              },
+              "Period": 300,
+              "Stat": "Sum"
+            },
+            "ReturnData": false
+          },
+          {
+            "Id": "thr",
+            "MetricStat": {
+              "Metric": {
+                "Dimensions": [
+                  {
+                    "Name": "TableName",
+                    "Value": {
+                      "Fn::ImportValue": "launchtest-staging-core:ExportsOutputRefDataTable447BC44E7F3657BE"
+                    }
+                  }
+                ],
+                "MetricName": "ThrottledRequests",
+                "Namespace": "AWS/DynamoDB"
+              },
+              "Period": 300,
+              "Stat": "Sum"
+            },
+            "ReturnData": false
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "env",
+            "Value": "staging"
+          },
+          {
+            "Key": "managed-by",
+            "Value": "cdk"
+          },
+          {
+            "Key": "owner",
+            "Value": "acalincarol@gmail.com"
+          },
+          {
+            "Key": "project",
+            "Value": "launchtest"
+          }
+        ],
+        "Threshold": 0,
+        "TreatMissingData": "notBreaching"
+      },
+      "Metadata": {
+        "aws:cdk:path": "launchtest-staging-api/DdbErrorsAlarm/Resource"
+      }
+    },
+    "QueueAgeAlarmC3F61350": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "AlarmActions": [
+          {
+            "Ref": "AlertTopic2720D535"
+          }
+        ],
+        "AlarmName": "launchtest-staging-queue-age",
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "Dimensions": [
+          {
+            "Name": "QueueName",
+            "Value": {
+              "Fn::GetAtt": [
+                "EventsQueueB96EB0D2",
+                "QueueName"
+              ]
+            }
+          }
+        ],
+        "EvaluationPeriods": 1,
+        "MetricName": "ApproximateAgeOfOldestMessage",
+        "Namespace": "AWS/SQS",
+        "Period": 300,
+        "Statistic": "Maximum",
+        "Tags": [
+          {
+            "Key": "env",
+            "Value": "staging"
+          },
+          {
+            "Key": "managed-by",
+            "Value": "cdk"
+          },
+          {
+            "Key": "owner",
+            "Value": "acalincarol@gmail.com"
+          },
+          {
+            "Key": "project",
+            "Value": "launchtest"
+          }
+        ],
+        "Threshold": 600,
+        "TreatMissingData": "notBreaching"
+      },
+      "Metadata": {
+        "aws:cdk:path": "launchtest-staging-api/QueueAgeAlarm/Resource"
+      }
+    },
+    "Dashboard9E4231ED": {
+      "Type": "AWS::CloudWatch::Dashboard",
+      "Properties": {
+        "DashboardBody": {
+          "Fn::Join": [
+            "",
+            [
+              "{\"widgets\":[{\"type\":\"metric\",\"width\":12,\"height\":6,\"x\":0,\"y\":0,\"properties\":{\"view\":\"timeSeries\",\"title\":\"API Requests & Errors\",\"region\":\"",
+              {
+                "Ref": "AWS::Region"
+              },
+              "\",\"metrics\":[[\"AWS/ApiGateway\",\"Count\",\"ApiId\",\"",
+              {
+                "Ref": "HttpApiF5A9A8A7"
+              },
+              "\",{\"period\":60,\"stat\":\"Sum\"}],[\"AWS/ApiGateway\",\"4XXError\",\"ApiId\",\"",
+              {
+                "Ref": "HttpApiF5A9A8A7"
+              },
+              "\",{\"period\":60,\"stat\":\"Sum\"}],[\"AWS/ApiGateway\",\"5XXError\",\"ApiId\",\"",
+              {
+                "Ref": "HttpApiF5A9A8A7"
+              },
+              "\",{\"period\":60,\"stat\":\"Sum\"}]],\"yAxis\":{}}},{\"type\":\"metric\",\"width\":12,\"height\":6,\"x\":12,\"y\":0,\"properties\":{\"view\":\"timeSeries\",\"title\":\"API Latency p50/p99\",\"region\":\"",
+              {
+                "Ref": "AWS::Region"
+              },
+              "\",\"metrics\":[[\"AWS/ApiGateway\",\"IntegrationLatency\",\"ApiId\",\"",
+              {
+                "Ref": "HttpApiF5A9A8A7"
+              },
+              "\",{\"period\":60,\"stat\":\"p50\"}],[\"AWS/ApiGateway\",\"IntegrationLatency\",\"ApiId\",\"",
+              {
+                "Ref": "HttpApiF5A9A8A7"
+              },
+              "\",{\"period\":60,\"stat\":\"p99\"}]],\"yAxis\":{}}},{\"type\":\"metric\",\"width\":12,\"height\":6,\"x\":0,\"y\":6,\"properties\":{\"view\":\"timeSeries\",\"title\":\"Lambda Invocations/Errors\",\"region\":\"",
+              {
+                "Ref": "AWS::Region"
+              },
+              "\",\"metrics\":[[\"AWS/Lambda\",\"Invocations\",\"FunctionName\",\"",
+              {
+                "Ref": "healthz7CB9789A"
+              },
+              "\",{\"period\":60,\"stat\":\"Sum\"}],[\"AWS/Lambda\",\"Errors\",\"FunctionName\",\"",
+              {
+                "Ref": "healthz7CB9789A"
+              },
+              "\",{\"period\":60,\"stat\":\"Sum\"}],[\"AWS/Lambda\",\"Invocations\",\"FunctionName\",\"",
+              {
+                "Ref": "me8035D6FF"
+              },
+              "\",{\"period\":60,\"stat\":\"Sum\"}],[\"AWS/Lambda\",\"Errors\",\"FunctionName\",\"",
+              {
+                "Ref": "me8035D6FF"
+              },
+              "\",{\"period\":60,\"stat\":\"Sum\"}],[\"AWS/Lambda\",\"Invocations\",\"FunctionName\",\"",
+              {
+                "Ref": "items07D08F4B"
+              },
+              "\",{\"period\":60,\"stat\":\"Sum\"}],[\"AWS/Lambda\",\"Errors\",\"FunctionName\",\"",
+              {
+                "Ref": "items07D08F4B"
+              },
+              "\",{\"period\":60,\"stat\":\"Sum\"}],[\"AWS/Lambda\",\"Invocations\",\"FunctionName\",\"",
+              {
+                "Ref": "consumer4CA80CB0"
+              },
+              "\",{\"period\":60,\"stat\":\"Sum\"}],[\"AWS/Lambda\",\"Errors\",\"FunctionName\",\"",
+              {
+                "Ref": "consumer4CA80CB0"
+              },
+              "\",{\"period\":60,\"stat\":\"Sum\"}]],\"yAxis\":{}}},{\"type\":\"metric\",\"width\":12,\"height\":6,\"x\":12,\"y\":6,\"properties\":{\"view\":\"timeSeries\",\"title\":\"DynamoDB Capacity & Throttles\",\"region\":\"",
+              {
+                "Ref": "AWS::Region"
+              },
+              "\",\"metrics\":[[\"AWS/DynamoDB\",\"ConsumedReadCapacityUnits\",\"TableName\",\"",
+              {
+                "Fn::ImportValue": "launchtest-staging-core:ExportsOutputRefDataTable447BC44E7F3657BE"
+              },
+              "\",{\"period\":60,\"stat\":\"Sum\"}],[\"AWS/DynamoDB\",\"ConsumedWriteCapacityUnits\",\"TableName\",\"",
+              {
+                "Fn::ImportValue": "launchtest-staging-core:ExportsOutputRefDataTable447BC44E7F3657BE"
+              },
+              "\",{\"period\":60,\"stat\":\"Sum\"}],[\"AWS/DynamoDB\",\"ThrottledRequests\",\"TableName\",\"",
+              {
+                "Fn::ImportValue": "launchtest-staging-core:ExportsOutputRefDataTable447BC44E7F3657BE"
+              },
+              "\",{\"period\":60,\"stat\":\"Sum\"}]],\"yAxis\":{}}},{\"type\":\"metric\",\"width\":12,\"height\":6,\"x\":0,\"y\":12,\"properties\":{\"view\":\"timeSeries\",\"title\":\"SQS Queue Depth & Age / DLQ\",\"region\":\"",
+              {
+                "Ref": "AWS::Region"
+              },
+              "\",\"metrics\":[[\"AWS/SQS\",\"ApproximateNumberOfMessagesVisible\",\"QueueName\",\"",
+              {
+                "Fn::GetAtt": [
+                  "EventsQueueB96EB0D2",
+                  "QueueName"
+                ]
+              },
+              "\",{\"period\":60,\"stat\":\"Maximum\"}],[\"AWS/SQS\",\"ApproximateAgeOfOldestMessage\",\"QueueName\",\"",
+              {
+                "Fn::GetAtt": [
+                  "EventsQueueB96EB0D2",
+                  "QueueName"
+                ]
+              },
+              "\",{\"period\":60,\"stat\":\"Maximum\"}],[\"AWS/SQS\",\"ApproximateNumberOfMessagesVisible\",\"QueueName\",\"",
+              {
+                "Fn::GetAtt": [
+                  "EventsDlqACDA5DFF",
+                  "QueueName"
+                ]
+              },
+              "\",{\"label\":\"DLQ Depth\",\"period\":60,\"stat\":\"Maximum\"}]],\"yAxis\":{}}}]}"
+            ]
+          ]
+        },
+        "DashboardName": "launchtest-staging-overview",
+        "Tags": [
+          {
+            "Key": "env",
+            "Value": "staging"
+          },
+          {
+            "Key": "managed-by",
+            "Value": "cdk"
+          },
+          {
+            "Key": "owner",
+            "Value": "acalincarol@gmail.com"
+          },
+          {
+            "Key": "project",
+            "Value": "launchtest"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "launchtest-staging-api/Dashboard/Resource"
+      }
+    },
+    "MonthlyBudget": {
+      "Type": "AWS::Budgets::Budget",
+      "Properties": {
+        "Budget": {
+          "BudgetLimit": {
+            "Amount": 20,
+            "Unit": "USD"
+          },
+          "BudgetName": "launchtest-staging-monthly",
+          "BudgetType": "COST",
+          "TimeUnit": "MONTHLY"
+        },
+        "NotificationsWithSubscribers": [
+          {
+            "Notification": {
+              "ComparisonOperator": "GREATER_THAN",
+              "NotificationType": "ACTUAL",
+              "Threshold": 80
+            },
+            "Subscribers": [
+              {
+                "Address": "stufflaters@gmail.com",
+                "SubscriptionType": "EMAIL"
+              }
+            ]
+          },
+          {
+            "Notification": {
+              "ComparisonOperator": "GREATER_THAN",
+              "NotificationType": "FORECASTED",
+              "Threshold": 100
+            },
+            "Subscribers": [
+              {
+                "Address": "stufflaters@gmail.com",
+                "SubscriptionType": "EMAIL"
+              }
+            ]
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "launchtest-staging-api/MonthlyBudget"
+      }
+    }
+  },
+  "Outputs": {
+    "ApiEndpoint": {
+      "Value": {
+        "Fn::GetAtt": [
+          "HttpApiF5A9A8A7",
+          "ApiEndpoint"
+        ]
+      },
+      "Export": {
+        "Name": "launchtest-staging-ApiEndpoint"
+      }
+    },
+    "DlqUrl": {
+      "Value": {
+        "Ref": "EventsDlqACDA5DFF"
+      },
+      "Export": {
+        "Name": "launchtest-staging-DlqUrl"
+      }
+    },
+    "EventBusName": {
+      "Value": {
+        "Ref": "BusEA82B648"
+      },
+      "Export": {
+        "Name": "launchtest-staging-EventBusName"
+      }
+    },
+    "ExportsOutputFnGetAttHttpApiF5A9A8A7ApiEndpoint082134F8": {
+      "Value": {
+        "Fn::GetAtt": [
+          "HttpApiF5A9A8A7",
+          "ApiEndpoint"
+        ]
+      },
+      "Export": {
+        "Name": "launchtest-staging-api:ExportsOutputFnGetAttHttpApiF5A9A8A7ApiEndpoint082134F8"
+      }
+    }
+  },
+  "Parameters": {},
+  "Rules": {}
+}

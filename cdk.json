@@ -1,0 +1,12 @@
+{
+  "app": "npx ts-node --prefer-ts-exts infra/bin/app.ts",
+  "context": {
+    "appName": "launchtest",
+    "envName": "staging",
+    "awsRegion": "us-east-1",
+    "alertEmail": "acalincarol@gmail.com",
+    "adminEmail": "acalincarol@gmail.com",
+    "monthlyBudgetUsd": "20",
+    "githubRepo": "skip"
+  }
+}
