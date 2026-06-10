@@ -48,21 +48,34 @@ version pins, grep-the-types-before-coding, one-stack-per-deploy, a resume
 protocol for dead sessions, leftover-stack reconciliation, and a 22-row failure
 playbook the agent must consult before any retry.
 
-## Repo layout
+## Repo layout & provenance — read this before judging the code
 
 ```
-infra/            CDK v2 (TypeScript): core / api / edge stacks   ← agent-generated
-services/         Lambda handlers (api, events consumer)          ← agent-generated
-scripts/          gate-N scripts + create-tenant                  ← agent-generated
-gates/            gate-N.json evidence from the live run          ← the proof
-web/              placeholder SPA
-docs/PROMPT.md            the copy-paste prompt (start here)
-docs/SUBMISSION.md        full submission document (9 sections)
-docs/runbook.html         step-by-step Run & Prove guide (open in browser)
-docs/jury-walkthrough.html  project walkthrough with embedded live-run
-                            evidence: dashboards, alarms, stack states,
-                            the firing DLQ alarm, the gate-6 alarm email
+gates/                     gate-0..7 JSON evidence from the live run  ← START HERE
+infra/lib/core-stack.ts    idiomatic CDK: the isolation core — trust pattern,
+                           LeadingKeys condition, gate-runner role, pre-token trigger
+infra/lib/api-stack.ts     ADOPTION artifact (see below) + api-template.json
+infra/lib/edge-stack.ts    ADOPTION artifact + edge-template.json
+services/api/              pre-token.ts + handlers/items.ts (the gate-3-fixed handler)
+scripts/                   gate-0..6 scripts — the gates as code
+docs/PROMPT.md             the copy-paste prompt (the product)
+docs/SUBMISSION.md         full submission document (9 sections)
+docs/jury-walkthrough.html narrated walkthrough w/ embedded live-run evidence
+docs/runbook.html          step-by-step Run & Prove guide
+docs/FINISH-THE-RUN.md     how gates 6–7 were closed (incl. the manual procedure)
 ```
+
+**Why two of the three stacks are template imports, honestly:** the live run was a
+*resume* onto an account that already had deployed stacks. For the core stack the
+agent rewrote and redeployed idiomatic CDK (it's the security-critical one — read it).
+For the api and edge stacks it **adopted the live CloudFormation templates via
+`CfnInclude`** instead of regenerating constructs that might replace live resources —
+state reconciliation over blind rebuild. The full deployed definition of every alarm,
+queue, route, and budget is auditable in `api-template.json` / `edge-template.json`;
+the handler code the gates exercised is in `services/`. Gate-7's evidence was written
+by the operator-run verification documented in `docs/FINISH-THE-RUN.md` (the budget
+itself shipped in the api stack); gates 0–6 were written by the agent's scripts in
+`scripts/`.
 
 **Demo video:** 60-second screen capture (gate-2 denials → live CloudFront URL →
 JSON healthz → honest 401 → the gate manifest) — link added on submission.
