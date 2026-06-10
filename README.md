@@ -1,7 +1,19 @@
-# Multi-Tenant-SaaS-Launchpad v2
+<div align="center">
+<img src="assets/logo.png" width="160" alt="Multi-Tenant SaaS Launchpad — tenant partitions forming a shield with a launch arrow">
 
-**One prompt. Empty AWS account → deployed multi-tenant serverless SaaS foundation,
-with tenant isolation enforced by IAM and proven by 9 machine-checked validation gates.**
+# Multi-Tenant-SaaS-Launchpad
+
+**One prompt. Empty AWS account → deployed multi-tenant serverless SaaS foundation,<br>with tenant isolation enforced by IAM and proven by machine-checked validation gates.**
+
+![gates](https://img.shields.io/badge/gates-8%2F8_PASS-3fb950?style=flat-square)
+![isolation](https://img.shields.io/badge/isolation-IAM_enforced-ff9900?style=flat-square)
+![live run](https://img.shields.io/badge/live_run-2026--06--10-58a6ff?style=flat-square)
+![license](https://img.shields.io/badge/license-MIT-9aa6b2?style=flat-square)
+
+[**🌐 Jury walkthrough**](https://orange-wind-d2b3.acalincarol.workers.dev/) · [**📜 The prompt**](docs/PROMPT.md) · [**🔒 The isolation proof**](gates/gate-2.json) · [**📖 Run it yourself**](docs/runbook.html)
+</div>
+
+---
 
 Paste `docs/PROMPT.md` into an agentic coding CLI (Kiro CLI, or any capable agent)
 from an empty directory. The agent builds three CDK stacks phase by phase —
@@ -45,7 +57,7 @@ under [`gates/`](gates/).
 The prompt itself is **hardened against agent failure modes** observed across
 runs: a workspace guard (sandboxes bind to the start directory), no hand-typed
 version pins, grep-the-types-before-coding, one-stack-per-deploy, a resume
-protocol for dead sessions, leftover-stack reconciliation, and a 22-row failure
+protocol for dead sessions, leftover-stack reconciliation, and a 23-row failure
 playbook the agent must consult before any retry.
 
 ## Repo layout & provenance — read this before judging the code
